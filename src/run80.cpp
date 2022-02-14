@@ -29,29 +29,72 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-#ifndef RUN80IO_H
-#define RUN80IO_H
 
-#include <sim80io.h>
+#include <run80.h>
+#include <stdio.h>
 
-#define Z80_IO_SIZE (256)
-
-/**
- ** Memory array pure virtual interface
- */
-
-class run80io : public sim80io
+run80::run80()
+: m_mem(NULL)
+, m_io(NULL)
+, m_load(NULL)
+, m_vm(NULL)
 {
-	public:
-		run80io();
-		virtual ~run80io();
-	
-		virtual uint8_t get(uint8_t addr);
-		virtual uint8_t put(uint8_t addr, uint8_t data);
+}
 
-	private:
+run80::~run80()
+{
+    if ( m_mem )
+        delete m_mem;
+    
+    if ( m_io )
+        delete m_io;
 
-		uint8_t m_io[Z80_IO_SIZE];
-};
+    if ( m_load )
+        delete m_load;
 
-#endif
+    if ( m_vm )
+        delete m_vm;
+}
+
+int run80::run(int argc,char** argv)
+{
+    if ( argc == 2 )
+    {
+        m_mem = new run80mem();
+        if ( m_mem )
+        {
+            m_load = new load80(m_mem);
+
+            if ( m_load->load(argv[1]) )
+            {
+                m_io = new run80io();
+                if ( m_io )
+                {
+                    m_vm = new sim80vm_z80a(m_mem,m_io);
+                    for(;;)
+                    {
+                        m_vm->step();
+                    }
+                }
+                else 
+                {
+                    fprintf( stderr, "failed to instantiate I/O\n" );
+                }
+            }
+            else 
+            {
+                fprintf( stderr, "failed to load %s\n", argv[1]);
+            }
+        }
+        else
+        {
+            fprintf( stderr, "failed to instantiate MEM\n");
+        }
+    }
+    else
+    {
+        fprintf( stderr, "usage: %s xxxxxx.s19\n", argv[0]);
+    }
+    return 1;
+}
+

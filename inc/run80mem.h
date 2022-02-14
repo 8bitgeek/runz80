@@ -34,6 +34,8 @@ SOFTWARE.
 
 #include <sim80mem.h>
 
+#define Z80_MEM_SIZE (1024*64)
+
 /**
  ** Memory array pure virtual interface
  */
@@ -41,11 +43,15 @@ SOFTWARE.
 class run80mem : public sim80mem
 {
 	public:
-		run80mem() {}
+		run80mem();
 		virtual ~run80mem();
 	
 		virtual uint8_t get(uint16_t addr);
 		virtual uint8_t put(uint16_t addr, uint8_t data);
+
+	private:
+
+		uint8_t	m_memory[Z80_MEM_SIZE];
 };
 
 #endif

@@ -32,16 +32,21 @@ SOFTWARE.
 
 #include <run80mem.h>
 
-sim80mem::~sim80mem()
+run80mem::run80mem()
+{
+    for(int n=0; n < Z80_MEM_SIZE; n++)
+        m_memory[n]=0xFF;
+}
+run80mem::~run80mem()
 {
 }
 
-uint8_t get(uint16_t addr)
+uint8_t run80mem::get(uint16_t addr)
 {
-    return 0;
+    return m_memory[addr];
 }
 
-uint8_t put(uint16_t addr, uint8_t data)
+uint8_t run80mem::put(uint16_t addr, uint8_t data)
 {
-    return 0;
+    return (m_memory[addr]=data);
 }

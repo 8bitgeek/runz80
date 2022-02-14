@@ -30,23 +30,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include <sim80io.h>
+#include <run80io.h>
 
-sim80io::run80io()
+run80io::run80io()
 {
 }
 
-sim80io::~sim80io()
+run80io::~run80io()
 {
 }
 	
-uint8_t get(uint8_t addr)
+uint8_t run80io::get(uint8_t addr)
 {
-    return 0
+    return m_io[addr];
 }
 
-uint8_t put(uint8_t addr, uint8_t data)
+uint8_t run80io::put(uint8_t addr, uint8_t data)
 {
-    return 0;
+    return (m_io[addr]=data);
 }
 

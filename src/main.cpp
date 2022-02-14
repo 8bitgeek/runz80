@@ -29,29 +29,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-#ifndef RUN80IO_H
-#define RUN80IO_H
 
-#include <sim80io.h>
+#include <run80.h>
 
-#define Z80_IO_SIZE (256)
-
-/**
- ** Memory array pure virtual interface
- */
-
-class run80io : public sim80io
+int main(int argc, char **argv)
 {
-	public:
-		run80io();
-		virtual ~run80io();
-	
-		virtual uint8_t get(uint8_t addr);
-		virtual uint8_t put(uint8_t addr, uint8_t data);
-
-	private:
-
-		uint8_t m_io[Z80_IO_SIZE];
-};
-
-#endif
+	run80 z80;
+    return z80.run(argc,argv);
+}

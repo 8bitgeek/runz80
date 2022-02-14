@@ -29,29 +29,38 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-#ifndef RUN80IO_H
-#define RUN80IO_H
+#ifndef LOAD80_H
+#define LOAD80_H
 
-#include <sim80io.h>
+#include <run80mem.h>
+#include <srecreader.h>
 
-#define Z80_IO_SIZE (256)
+#define LOAD_Z80_MAX_LINE    780
 
-/**
- ** Memory array pure virtual interface
- */
-
-class run80io : public sim80io
+class load80
 {
 	public:
-		run80io();
-		virtual ~run80io();
+		load80(run80mem* mem,const char* name=NULL);
+		virtual ~load80();
 	
-		virtual uint8_t get(uint8_t addr);
-		virtual uint8_t put(uint8_t addr, uint8_t data);
+		bool load(const char* name=NULL);
+        uint16_t entry_point(void);
+
+        int                 cb_meta_fn(srec_reader_t* srec_state);
+        int                 cb_store_fn(srec_reader_t* srec_state);
+        int                 cb_term_fn(srec_reader_t* srec_state);
+        int                 cb_fault_fn(srec_reader_t* srec_state);
 
 	private:
 
-		uint8_t m_io[Z80_IO_SIZE];
+		run80mem*           m_mem;
+        FILE*               m_file;
+        const char*         m_name;
+        bool                m_success;
+        uint16_t            m_entry_point;
+        srec_reader_t       m_srec_state;
+        char                m_line[LOAD_Z80_MAX_LINE];
+        
 };
 
 #endif

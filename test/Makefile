@@ -28,34 +28,26 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# ******************************************************************************/
-# Build Target
-TARGET=runz80
+# ******************************************************************************
+TARGET=z80.s19
 
-# GCC toolchain programs.
-CPP = ${LIBZ80_GCC}g++
-
-LIBS += libz80cpu/libz80cpu.a 
-LIBS += libs19/libs19.a 
+# GNU assembler toolchain programs.
+AS = z80-unknown-coff-as
+LD = z80-unknown-coff-ld
 
 # C compilation directives
-CFLAGS +=  -I libz80cpu/inc -I libs19
-CFLAGS += -c
-CFLAGS += -Wall
-CFLAGS += ${LIBZ80_CFLAGS}
+AFLAGS += ${LIBZ80_AFLAGS}
 
 # Header file directories.
-INCLUDE += -I inc
+INCLUDE += -I ./
 
 # Z/80 CPU Source Files
-CPP_SRC  += src/run80.cpp
-CPP_SRC  += src/run80io.cpp
-CPP_SRC  += src/run80mem.cpp
-CPP_SRC  += src/load80.cpp
-CPP_SRC  += src/main.cpp
+ASRC  += abi.s
+ASRC  += int32.s
+ASRC  += main.s
 
 # Object files to build.
-OBJS += $(CPP_SRC:.cpp=.o)
+OBJS += $(ASRC:.s=.o)
 
 # Default rule to build the whole project.
 .PHONY: all
@@ -63,21 +55,14 @@ all: $(TARGET)
 
 # Rule to compile C files.
 %.o: %.cpp
-	$(CPP) $(CFLAGS) $(INCLUDE) $< -o $@
+	$(AS) $(AFLAGS) $(INCLUDE) $< -o $@
 
 # Rule to create an ELF file from the compiled object files.
 $(TARGET): $(OBJS)
-	(cd libs19 && make)
-	(cd libz80cpu && make)
-	(cd test && make)
-	$(CPP) -o $@  $^ $(LIBS)
-
+	$(LD) -e main --oformat srec -o $@  $^ $(LIBS)
 
 # Rule to clear out generated build files.
 .PHONY: clean
 clean:
 	rm -f $(OBJS) $(TARGET)
-	(cd libs19 && make clean)
-	(cd libz80cpu && make clean)
-	(cd test && make clean)
 

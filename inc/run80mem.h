@@ -49,6 +49,9 @@ class run80mem : public sim80mem
 		virtual uint8_t get(uint16_t addr);
 		virtual uint8_t put(uint16_t addr, uint8_t data);
 
+		virtual uint16_t 	get16(uint16_t addr);
+		virtual uint16_t	put16(uint16_t addr, uint16_t data);
+
 	private:
 
 		uint8_t	m_memory[Z80_MEM_SIZE];

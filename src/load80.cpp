@@ -88,7 +88,8 @@ static int fault_fn(srec_reader_t* srec_reader)
 /* ================================================================== */
 
 load80::load80(run80mem* mem,const char* name)
-: m_file(NULL)
+: m_mem(mem)
+, m_file(NULL)
 , m_name(name)
 , m_success(false)
 , m_entry_point(0)
@@ -154,7 +155,7 @@ int load80::cb_store_fn(srec_reader_t* srec_state)
     {
         uint32_t load_address = result->address+count;
         uint8_t data = result->data[count];
-        // printf( "LD: %08x: %02X \n", load_address, data );
+        printf( "LD: %08x: %02X \n", load_address, data );
         m_mem->put((uint16_t)load_address&0xFFFF,data);
     }
     return 0;
@@ -163,7 +164,7 @@ int load80::cb_store_fn(srec_reader_t* srec_state)
 int load80::cb_term_fn(srec_reader_t* srec_state)
 {
     srec_result_t* result = &srec_state->record;
-    //printf( "TM: %08x\n", result->address );
+    printf( "TM: %08x\n", result->address );
     m_entry_point = result->address;
     return 0;
 }

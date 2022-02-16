@@ -43,17 +43,6 @@ run80::run80()
 
 run80::~run80()
 {
-    if ( m_mem )
-        delete m_mem;
-    
-    if ( m_io )
-        delete m_io;
-
-    if ( m_load )
-        delete m_load;
-
-    if ( m_vm )
-        delete m_vm;
 }
 
 int run80::run(int argc,char** argv)
@@ -64,27 +53,45 @@ int run80::run(int argc,char** argv)
         if ( m_mem )
         {
             m_load = new load80(m_mem);
-
-            if ( m_load->load(argv[1]) )
+            if ( m_load )
             {
-                m_io = new run80io();
-                if ( m_io )
+                if ( m_load->load(argv[1]) )
                 {
-                    m_vm = new sim80vm_z80a(m_mem,m_io);
-                    for(;;)
+                    m_io = new run80io();
+                    if ( m_io )
                     {
-                        m_vm->step();
+                        m_vm = new sim80vm_z80a(m_mem,m_io);
+                        if ( m_vm )
+                        {
+                            m_vm->step(m_load->entry_point());
+                            for(;;)
+                            {
+                                m_vm->step();
+                            }
+                            delete m_vm;
+                        }
+                        else
+                        {
+                            fprintf( stderr, "failed to instantiate VM\n" );
+                        }
+                        delete m_io;
+                    }
+                    else 
+                    {
+                        fprintf( stderr, "failed to instantiate I/O\n" );
                     }
                 }
                 else 
                 {
-                    fprintf( stderr, "failed to instantiate I/O\n" );
+                    fprintf( stderr, "failed to load %s\n", argv[1]);
                 }
+                delete m_load;
             }
-            else 
+            else
             {
-                fprintf( stderr, "failed to load %s\n", argv[1]);
+                fprintf( stderr, "failed to instantiate LOADER\n");
             }
+            delete m_mem;
         }
         else
         {

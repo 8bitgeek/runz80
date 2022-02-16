@@ -44,7 +44,7 @@ class load80
 		virtual ~load80();
 	
 		bool load(const char* name=NULL);
-        uint16_t entry_point(void);
+        uint16_t entry_point(void) {return m_entry_point;}
 
         int                 cb_meta_fn(srec_reader_t* srec_state);
         int                 cb_store_fn(srec_reader_t* srec_state);

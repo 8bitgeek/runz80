@@ -50,3 +50,19 @@ uint8_t run80mem::put(uint16_t addr, uint8_t data)
 {
     return (m_memory[addr]=data);
 }
+
+uint16_t run80mem::get16(uint16_t addr)
+{
+    uint16_t t;
+    t = m_memory[addr];
+    t |= m_memory[addr]<<8;
+    return t;
+}
+
+uint16_t run80mem::put16(uint16_t addr, uint16_t data)
+{
+    m_memory[addr++] = data&0xFF;
+    m_memory[addr] = (data>>8)&0xFF;
+    return data;
+}
+
